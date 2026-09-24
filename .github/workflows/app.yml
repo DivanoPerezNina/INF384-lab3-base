@@ -201,12 +201,40 @@ jobs:
   #
   # Sustituir el paso centinela por la implementacion.
   publicar:
+    needs: [calidad, secretos, dependencias, estatico]
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
+    outputs:
+      digest: ${{ steps.expose.outputs.digest }}
     steps:
-      - name: Sin implementar
-        run: |
-          echo "::error::El job 'publicar' no esta implementado."
-          exit 1
+      - uses: actions/checkout@v4
+
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
+          aws-region: us-east-1
+
+      - id: ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - id: vars
+        run: echo "sha_tag=${GITHUB_SHA::7}" >> "$GITHUB_OUTPUT"
+
+      - id: build
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          platforms: linux/amd64
+          push: true
+          tags: |
+            ${{ steps.ecr.outputs.registry }}/<tu-repo-ecr>:${{ steps.vars.outputs.sha_tag }}
+            ${{ steps.ecr.outputs.registry }}/<tu-repo-ecr>:prd
+          labels: org.opencontainers.image.title=inf384-lab3
+
+      - id: expose
+        run: echo "digest=${{ steps.ecr.outputs.registry }}/<tu-repo-ecr>@${{ steps.build.outputs.digest }}" >> "$GITHUB_OUTPUT"
 
   # Este job viene completo y no se modifica.
   # Las estrategias de despliegue y la verificacion posterior son contenido
