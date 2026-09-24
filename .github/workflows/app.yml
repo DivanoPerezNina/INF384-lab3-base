@@ -229,12 +229,12 @@ jobs:
           platforms: linux/amd64
           push: true
           tags: |
-            ${{ steps.ecr.outputs.registry }}/<tu-repo-ecr>:${{ steps.vars.outputs.sha_tag }}
-            ${{ steps.ecr.outputs.registry }}/<tu-repo-ecr>:prd
+            ${{ steps.ecr.outputs.registry }}/inf384-lab3:${{ steps.vars.outputs.sha_tag }}
+            ${{ steps.ecr.outputs.registry }}/inf384-lab3:prd
           labels: org.opencontainers.image.title=inf384-lab3
 
       - id: expose
-        run: echo "digest=${{ steps.ecr.outputs.registry }}/<tu-repo-ecr>@${{ steps.build.outputs.digest }}" >> "$GITHUB_OUTPUT"
+        run: echo "digest=${{ steps.ecr.outputs.registry }}/inf384-lab3@${{ steps.build.outputs.digest }}" >> "$GITHUB_OUTPUT"
 
   # Este job viene completo y no se modifica.
   # Las estrategias de despliegue y la verificacion posterior son contenido
