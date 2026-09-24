@@ -1,9 +1,0 @@
-# Archivo de ejemplo. El repositorio no trae un .dockerignore funcional.
-#
-# Crear .dockerignore en la raiz del repositorio es parte del bloque A1
-# de la guia. Definir su contenido es trabajo del alumno: el criterio es
-# que el contexto de construccion no incluya nada que no necesite llegar
-# a la imagen.
-#
-# Sintaxis: un patron por linea, con la misma forma que .gitignore.
-# TODO
